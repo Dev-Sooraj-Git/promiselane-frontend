@@ -33,33 +33,54 @@ export default function Register() {
     };
 
     return (
-        <div style={{ maxWidth: 400, margin: '80px auto', padding: 20 }}>
-            <h2>Create Your PromiseLane Account</h2>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            <form onSubmit={handleSubmit}>
-                <div style={{ marginBottom: 12 }}>
-                    <label>Name</label><br />
-                    <input type="text" value={name} onChange={(e) => setName(e.target.value)} required style={{ width: '100%', padding: 8 }} />
-                </div>
-                <div style={{ marginBottom: 12 }}>
-                    <label>Email</label><br />
-                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required style={{ width: '100%', padding: 8 }} />
-                </div>
-                <div style={{ marginBottom: 12 }}>
-                    <label>Password</label><br />
-                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required style={{ width: '100%', padding: 8 }} />
-                </div>
-                <div style={{ marginBottom: 12 }}>
-                    <label>Confirm Password</label><br />
-                    <input type="password" value={passwordConfirmation} onChange={(e) => setPasswordConfirmation(e.target.value)} required style={{ width: '100%', padding: 8 }} />
-                </div>
-                <button type="submit" disabled={loading} style={{ padding: '10px 20px', cursor: 'pointer' }}>
-                    {loading ? 'Creating Account...' : 'Register'}
-                </button>
-            </form>
-            <p style={{ marginTop: 16 }}>
-                Already have an account? <Link to="/login">Login</Link>
-            </p>
+        <div className="min-h-screen flex items-center justify-center bg-gray-100">
+            <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+                <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
+                    Create Your Account
+                </h2>
+
+                {error && (
+                    <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
+                        {error}
+                    </div>
+                )}
+
+                <form onSubmit={handleSubmit}>
+                    <div className="mb-4">
+                        <label className="block text-gray-700 text-sm font-medium mb-1">Name</label>
+                        <input type="text" value={name} onChange={(e) => setName(e.target.value)} required
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                    </div>
+
+                    <div className="mb-4">
+                        <label className="block text-gray-700 text-sm font-medium mb-1">Email</label>
+                        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                    </div>
+
+                    <div className="mb-4">
+                        <label className="block text-gray-700 text-sm font-medium mb-1">Password</label>
+                        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                    </div>
+
+                    <div className="mb-6">
+                        <label className="block text-gray-700 text-sm font-medium mb-1">Confirm Password</label>
+                        <input type="password" value={passwordConfirmation} onChange={(e) => setPasswordConfirmation(e.target.value)} required
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                    </div>
+
+                    <button type="submit" disabled={loading}
+                        className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed font-medium">
+                        {loading ? 'Creating Account...' : 'Register'}
+                    </button>
+                </form>
+
+                <p className="text-center text-gray-600 text-sm mt-6">
+                    Already have an account?{' '}
+                    <Link to="/login" className="text-blue-600 hover:underline font-medium">Login</Link>
+                </p>
+            </div>
         </div>
     );
 }
