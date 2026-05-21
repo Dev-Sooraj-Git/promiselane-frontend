@@ -1,15 +1,16 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import Layout from './components/Layout';
+import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
+// import Projects from './pages/Projects';
 
 function ProtectedRoute({ children }) {
     const { user, loading } = useAuth();
-
     if (loading) return <p>Loading...</p>;
     if (!user) return <Navigate to="/login" />;
-
     return children;
 }
 
@@ -18,16 +19,18 @@ function App() {
         <AuthProvider>
             <BrowserRouter>
                 <Routes>
+                    {/* Public routes */}
+                    <Route path="/" element={<Home />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
-                    <Route
-                        path="/dashboard"
-                        element={
-                            <ProtectedRoute>
-                                <Dashboard />
-                            </ProtectedRoute>
-                        }
-                    />
+
+                    {/* Protected routes with Layout */}
+                    <Route element={<ProtectedRoute><Layout><Outlet /></Layout></ProtectedRoute>}>
+                        <Route path="/dashboard" element={<Dashboard />} />
+                       <Route path="/projects" element={<div className="p-8 text-stone-600">Projects page coming soon.</div>} />
+                    </Route>
+
+                    {/* Catch-all */}
                     <Route path="*" element={<Navigate to="/login" />} />
                 </Routes>
             </BrowserRouter>
