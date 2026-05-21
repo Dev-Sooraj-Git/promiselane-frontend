@@ -1,8 +1,17 @@
 @import "tailwindcss";
 
-@layer base {
-    body {
-        @apply bg-slate-50 text-slate-800;
-        font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    }
+@theme {
+    --color-primary: #0B1121;
+    --color-primary-surface: #1A2235;
+    --color-accent: #E5A84B;
+    --color-accent-soft: #F5D68A;
+    --color-bg: #FAFAF8;
+    --color-card: #FFFFFF;
+    --color-border: #EBEBE8;
+    --color-text: #1A1A1A;
+    --color-text-secondary: #5C5C5C;
+    --color-text-muted: #999999;
+    --color-success: #2D8A6E;
+    --color-danger: #D14343;
+    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
 }
