@@ -45,7 +45,6 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* Problem / Solution */}
            {/* Problem / Solution */}
             <section className="max-w-6xl mx-auto px-6 md:px-14 py-20 md:py-28">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-14 items-center">
