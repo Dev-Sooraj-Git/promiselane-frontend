@@ -9,7 +9,7 @@ const navItems = [
 ];
 
 const secondaryItems = [
-    { icon: Settings, label: 'Settings', path: '/settings', phase: 3 },
+    { icon: Settings, label: 'Settings', path: '/settings' },
 ];
 
 export default function Sidebar() {
@@ -20,20 +20,34 @@ export default function Sidebar() {
 
     return (
         <div
-            className="fixed left-0 top-10 bottom-0 z-20 transition-all duration-300 flex flex-col border-r shadow-sm"
+            className="fixed left-0 top-0 bottom-0 z-20 transition-all duration-300 flex flex-col"
             style={{
                 width: expanded ? '208px' : '64px',
-                backgroundColor: '#FAFAF7',
-                borderColor: '#E8E6E1',
+                background: 'linear-gradient(180deg, #0B1121 0%, #111A2E 100%)',
+                borderRight: '1px solid rgba(255,255,255,0.04)',
             }}
             onMouseEnter={() => setExpanded(true)}
             onMouseLeave={() => setExpanded(false)}
         >
-            {/* Gradient accent strip at top */}
-            {/* <div className="h-1 w-full" style={{ background: 'linear-gradient(90deg, #0D9488, #F59E0B)' }}></div> */}
+            {/* Top accent glow */}
+            <div className="mx-3 mt-0 h-px bg-gradient-to-r from-transparent via-accent/50 to-transparent"></div>
 
-            {/* Primary Nav Items */}
-            <nav className="flex-1 py-6 space-y-1 px-3">
+            {/* Logo */}
+            <Link to="/dashboard" className="flex items-center gap-3 px-4 py-5 border-b border-white/5">
+                <div className="w-8 h-8 bg-gradient-to-br from-accent to-[#F5C97D] rounded-lg flex items-center justify-center flex-shrink-0 shadow-[0_3px_10px_rgba(229,168,75,0.3)]">
+                    <span className="font-bold text-sm text-primary">P</span>
+                </div>
+                <span
+                    className={`font-bold text-sm tracking-tight text-[#F5F5F5] whitespace-nowrap transition-all duration-200 ${
+                        expanded ? 'opacity-100' : 'opacity-0 w-0 overflow-hidden'
+                    }`}
+                >
+                    PromiseLane
+                </span>
+            </Link>
+
+            {/* Primary Nav */}
+            <nav className="flex-1 py-4 space-y-1 px-3">
                 {navItems.map((item) => {
                     const active = isActive(item.path);
                     const Icon = item.icon;
@@ -41,30 +55,33 @@ export default function Sidebar() {
                         <Link
                             key={item.path}
                             to={item.path}
-                            className={`flex items-center px-2.5 py-2.5 rounded-xl transition-all duration-200 ${expanded ? 'gap-3' : 'gap-0 justify-center'}`}
+                            className={`flex items-center px-3 py-2.5 rounded-xl ... ${expanded ? 'gap-3' : 'gap-0 justify-center'}`}
                             style={{
-                                backgroundColor: active ? '#FFFFFF' : 'transparent',
-                                color: active ? '#0D9488' : '#78716C',
-                                boxShadow: active ? '0 1px 3px rgba(0,0,0,0.06)' : 'none',
+                                backgroundColor: active ? 'rgba(229,168,75,0.10)' : 'transparent',
+                                color: active ? '#F5D68A' : '#8A8FA3',
+                                boxShadow: active ? 'inset 0 0 0 1px rgba(229,168,75,0.15)' : 'none',
                             }}
                         >
-                            <Icon size={22} strokeWidth={active ? 2 : 1.6} />
+                            <Icon size={20} strokeWidth={active ? 2 : 1.6} />
                             <span
                                 className={`text-sm font-medium whitespace-nowrap transition-all duration-200 ${
-                                    expanded ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-2 overflow-hidden w-0'
+                                    expanded ? 'opacity-100' : 'opacity-0 w-0 overflow-hidden'
                                 }`}
                             >
                                 {item.label}
                             </span>
+                            {active && (
+                                <div className="absolute left-0 w-0.5 h-5 rounded-r-full bg-gradient-to-b from-accent to-accent-soft"></div>
+                            )}
                         </Link>
                     );
                 })}
             </nav>
 
             {/* Divider */}
-            <div className="mx-4 border-t" style={{ borderColor: '#E8E6E1' }}></div>
+            <div className="mx-4 border-t border-white/5"></div>
 
-            {/* Secondary Nav Items */}
+            {/* Secondary Nav */}
             <nav className="py-4 space-y-1 px-3">
                 {secondaryItems.map((item) => {
                     const Icon = item.icon;
@@ -72,13 +89,14 @@ export default function Sidebar() {
                         <Link
                             key={item.path}
                             to={item.path}
-                            className="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200"
-                            style={{ color: '#A8A29E' }}
+                            className={`flex items-center px-3 py-2.5 rounded-xl transition-all duration-200 text-[#8A8FA3] hover:text-[#8A8FA3] hover:bg-white/5 ${
+                            expanded ? 'gap-3' : 'gap-0 justify-center'
+                        }`}
                         >
                             <Icon size={20} strokeWidth={1.6} />
                             <span
                                 className={`text-sm font-medium whitespace-nowrap transition-all duration-200 ${
-                                    expanded ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-2 overflow-hidden w-0'
+                                    expanded ? 'opacity-100' : 'opacity-0 w-0 overflow-hidden'
                                 }`}
                             >
                                 {item.label}
@@ -87,6 +105,11 @@ export default function Sidebar() {
                     );
                 })}
             </nav>
+
+            {/* Footer */}
+            <div className="px-4 py-4 border-t border-white/5 text-[10px] text-[#5A6070] text-center uppercase tracking-wider">
+                {expanded ? 'PromiseLane · 2026' : 'PL'}
+            </div>
         </div>
     );
 }
