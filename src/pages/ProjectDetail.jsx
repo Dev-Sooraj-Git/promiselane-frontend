@@ -3,6 +3,8 @@ import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Edit, Share2, Trash2, Plus, Search, User, Wallet, Calendar, ClipboardList } from 'lucide-react';
 import api from '../api/axios';
 import Button from '../components/ui/Button';
+import RequirementSection from '../components/RequirementSection';
+import PaymentModal from '../components/PaymentModal';
 
 export default function ProjectDetail() {
     const { id } = useParams();
@@ -11,6 +13,7 @@ export default function ProjectDetail() {
     const [selectedMilestone, setSelectedMilestone] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [showPayments, setShowPayments] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -111,7 +114,8 @@ export default function ProjectDetail() {
                                      m.due_date ? `Due ${new Date(m.due_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}` : 'No due date'}
                                 </div>
                                 {/* Payment quick view button */}
-                                <button className="mt-2 w-full flex items-center justify-center gap-1 px-2 py-1 rounded-md text-[10px] font-semibold border border-success/20 bg-success/5 text-success hover:bg-success/10 transition-colors">
+                                <button className="mt-2 w-full flex items-center justify-center gap-1 px-2 py-1 rounded-md text-[10px] font-semibold border border-success/20 bg-success/5 text-success hover:bg-success/10 transition-colors"
+                                    onClick={(e) => { e.stopPropagation();   setSelectedMilestone(m);  setShowPayments(true); }}>
                                     <Wallet size={10} /> View Payments
                                 </button>
                             </div>
@@ -160,7 +164,7 @@ export default function ProjectDetail() {
 
                             {/* Requirements Section */}
                             <div className="mb-6">
-                                <div className="flex items-center justify-between mb-2.5">
+                                {/* <div className="flex items-center justify-between mb-2.5">
                                     <h4 className="text-[11px] font-bold uppercase tracking-wider text-text-muted">📋 Requirements</h4>
                                     <Button variant="outline" className="btn-xs"><Plus size={11} /> Add</Button>
                                 </div>
@@ -168,7 +172,8 @@ export default function ProjectDetail() {
                                     <ClipboardList size={24} className="mx-auto mb-2 opacity-30" />
                                     <p className="text-xs">No requirements yet</p>
                                     <p className="text-[11px] mt-0.5">Capture client requests linked to this milestone.</p>
-                                </div>
+                                </div> */}
+                                <RequirementSection milestone={selectedMilestone} />
                             </div>
                         </div>
                     ) : (
@@ -178,8 +183,14 @@ export default function ProjectDetail() {
                             <p className="text-xs mt-1">Requirements, deliverables, and payments will appear here.</p>
                         </div>
                     )}
-                </div>
+                </div>  
             </div>
+            <PaymentModal
+                key={selectedMilestone?.id}
+                isOpen={showPayments}
+                onClose={() => setShowPayments(false)}
+                milestone={selectedMilestone}
+            />
         </div>
     );
 }
