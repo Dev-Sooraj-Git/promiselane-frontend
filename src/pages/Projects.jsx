@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, FolderKanban } from 'lucide-react';
+import { Plus, FolderKanban, Calendar} from 'lucide-react';
 import api from '../api/axios';
 import Button from '../components/ui/Button';
 import Modal from '../components/ui/Modal';
@@ -53,7 +53,7 @@ export default function Projects() {
     );
 
     return (
-        <div className="max-w-5xl mx-auto px-6 py-8">
+        <div className="max-w-6xl mx-auto px-6 py-8">
             <div className="flex items-center justify-between mb-6">
                 <div>
                     <h1 className="text-xl font-bold text-primary">My Projects</h1>
@@ -85,6 +85,32 @@ export default function Projects() {
                                     }`}>● {p.status}</span>
                                 </div>
                             </div>
+
+                            {/* Milestone Summary Row */}
+                            {p.milestones_total > 0 && (
+                                <>
+                                    <div className="border-t border-border my-3"></div>
+                                    <div className="flex items-center gap-4 text-xs text-text-secondary flex-wrap">
+                                        <span className="flex items-center gap-1">
+                                            <span className="w-1.5 h-1.5 rounded-full bg-accent"></span>
+                                            {p.milestones_completed} of {p.milestones_total} milestones done
+                                        </span>
+                                        {p.next_milestone && (
+                                            <span className="flex items-center gap-1 text-text-muted">
+                                            <Calendar size={11} /> Next: {p.next_milestone}
+                                                {p.next_due_date && ` · ${new Date(p.next_due_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}`}
+                                            </span>
+                                        )}
+                                    </div>
+                                    {/* Progress Bar */}
+                                    <div className="mt-2 h-1.5 bg-border rounded-full overflow-hidden">
+                                        <div
+                                            className="h-full bg-gradient-to-r from-accent to-accent-soft rounded-full transition-all duration-500"
+                                            style={{ width: `${Math.round((p.milestones_completed / p.milestones_total) * 100)}%` }}
+                                        ></div>
+                                    </div>
+                                </>
+                            )}
                         </Link>
                     ))}
                 </div>
