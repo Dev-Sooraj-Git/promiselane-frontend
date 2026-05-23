@@ -5,7 +5,8 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
-// import Projects from './pages/Projects';
+import Projects from './pages/Projects';
+import ProjectDetail from './pages/ProjectDetail';
 
 function ProtectedRoute({ children }) {
     const { user, loading } = useAuth();
@@ -27,7 +28,9 @@ function App() {
                     {/* Protected routes with Layout */}
                     <Route element={<ProtectedRoute><Layout><Outlet /></Layout></ProtectedRoute>}>
                         <Route path="/dashboard" element={<Dashboard />} />
-                       <Route path="/projects" element={<div className="p-8 text-stone-600">Projects page coming soon.</div>} />
+                        {/* <Route path="/projects" element={<div className="p-8 text-stone-600">Projects page coming soon.</div>} /> */}
+                        <Route path="/projects" element={<Projects />} />
+                        <Route path="/projects/:id" element={<ProjectDetail />} />
                     </Route>
 
                     {/* Catch-all */}
