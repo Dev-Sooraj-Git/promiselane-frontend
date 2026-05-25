@@ -28,11 +28,14 @@ export default function PaymentModal({ isOpen, onClose, milestone, onUpdated }) 
    
     useEffect(() => {
         if (!milestone) return;
+
         setPayments([]);
         setLoading(true);
+
         api.get(`/projects/${milestone.project_id}/milestones/${milestone.id}/payments`)
             .then(res => setPayments(res.data.data))
             .finally(() => setLoading(false));
+            
     }, [milestone?.id]);      
 
     const handleAdd = async (e) => {

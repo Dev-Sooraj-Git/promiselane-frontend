@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Edit, Share2, Trash2, Plus, Search, User, Wallet, Calendar, ClipboardList } from 'lucide-react';
+import { ArrowLeft, Edit, Share2, Trash2, Plus, Search, User, Wallet, Calendar, ClipboardList, Clock } from 'lucide-react';
 import api from '../api/axios';
 import Button from '../components/ui/Button';
 import RequirementSection from '../components/RequirementSection';
 import PaymentModal from '../components/PaymentModal';
+import MilestoneFormModal from '../components/MilestoneFormModal';
+import Modal from '../components/ui/Modal';
 
 export default function ProjectDetail() {
     const { id } = useParams();
@@ -14,6 +16,11 @@ export default function ProjectDetail() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [showPayments, setShowPayments] = useState(false);
+    const [showMilestoneForm, setShowMilestoneForm] = useState(false);
+    const [editingMilestone, setEditingMilestone] = useState(null);
+    const [showEditProject, setShowEditProject] = useState(false);
+    const [editForm, setEditForm] = useState({ title: '', client_name: '', client_email: '', description: '', total_amount: '', status: 'active' });
+    const [editSubmitting, setEditSubmitting] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -35,6 +42,47 @@ export default function ProjectDetail() {
         };
         fetchData();
     }, [id]);
+
+    const handleMilestoneSubmit = async (formData) => {
+        if (editingMilestone) {
+            await api.put(`/projects/${id}/milestones/${editingMilestone.id}`, formData);
+        } else {
+            await api.post(`/projects/${id}/milestones`, formData);
+        }
+        // Refresh milestones
+        const res = await api.get(`/projects/${id}/milestones`);
+        setMilestones(res.data.data);
+        if (res.data.data.length > 0) setSelectedMilestone(res.data.data[0]);
+    };
+
+    const handleDeleteMilestone = async (milestoneId) => {
+        if (!confirm('Delete this milestone?')) return;
+        await api.delete(`/projects/${id}/milestones/${milestoneId}`);
+        const res = await api.get(`/projects/${id}/milestones`);
+        setMilestones(res.data.data);
+        setSelectedMilestone(res.data.data.length > 0 ? res.data.data[0] : null);
+    };
+
+    const handleEditProject = async (e) => {
+        e.preventDefault();
+        setEditSubmitting(true);
+        try {
+            await api.put(`/projects/${id}`, editForm);
+            const res = await api.get(`/projects/${id}`);
+            setProject(res.data.data);
+            setShowEditProject(false);
+        } catch (err) {
+            alert(err.response?.data?.message || 'Failed to update project.');
+        } finally {
+            setEditSubmitting(false);
+        }
+    };
+
+    const handleDeleteProject = async () => {
+        if (!confirm('Delete this entire project? This cannot be undone.')) return;
+        await api.delete(`/projects/${id}`);
+        window.location.href = '/projects';
+    };
 
     if (loading) return (
         <div className="flex items-center justify-center min-h-screen bg-bg">
@@ -60,9 +108,15 @@ export default function ProjectDetail() {
                     <span className="text-text font-semibold">{project?.title}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                    <Button variant="outline" className="btn-sm"><Edit size={13} /> Edit</Button>
+                    <Button variant="outline" className="btn-sm" onClick={() => {
+                        setEditForm({ title: project.title, client_name: project.client_name, client_email: project.client_email || '', description: project.description || '', total_amount: project.total_amount, status: project.status?.toLowerCase() });
+                        setShowEditProject(true);
+                    }}><Edit size={13} /> Edit</Button>
                     <Button variant="outline" className="btn-sm"><Share2 size={13} /> Share</Button>
-                    <Button variant="danger" className="btn-sm"><Trash2 size={13} /></Button>
+                    <Link to={`/projects/${id}/timeline`}>
+                            <Button variant="outline" className="btn-sm"><Clock size={13} /> Timeline</Button>
+                    </Link>
+                    <Button variant="danger" className="btn-sm" onClick={handleDeleteProject}><Trash2 size={13} /></Button>
                 </div>
             </div>
 
@@ -84,7 +138,9 @@ export default function ProjectDetail() {
                 <div className="w-[300px] border-r border-border bg-card flex flex-col flex-shrink-0">
                     <div className="flex items-center justify-between px-4 py-3 border-b border-border">
                         <h2 className="text-[13px] font-semibold text-text">Milestones</h2>
-                        <Button variant="primary" className="btn-xs"><Plus size={12} /> Add</Button>
+                       <Button variant="primary" className="btn-xs" onClick={() => { setEditingMilestone(null); setShowMilestoneForm(true); }}>
+                            <Plus size={12} /> Add
+                        </Button>
                     </div>
                     <div className="px-3 py-2">
                         <div className="relative">
@@ -138,10 +194,12 @@ export default function ProjectDetail() {
                             <div className="flex items-center justify-between mb-3">
                                 <h3 className="text-lg font-bold text-primary tracking-tight">{selectedMilestone.title}</h3>
                                 <div className="flex items-center gap-1">
-                                    <button className="p-1.5 rounded-lg hover:bg-border/50 transition-colors text-text-muted hover:text-text">
+                                    <button className="p-1.5 rounded-lg hover:bg-border/50 transition-colors text-text-muted hover:text-text"
+                                        onClick={() => { setEditingMilestone(selectedMilestone); setShowMilestoneForm(true); }}>
                                         <Edit size={13} />
                                     </button>
-                                    <button className="p-1.5 rounded-lg hover:bg-danger/10 transition-colors text-text-muted hover:text-danger">
+                                    <button className="p-1.5 rounded-lg hover:bg-danger/10 transition-colors text-text-muted hover:text-danger"
+                                        onClick={() => handleDeleteMilestone(selectedMilestone.id)}>
                                         <Trash2 size={13} />
                                     </button>
                                 </div>
@@ -191,6 +249,59 @@ export default function ProjectDetail() {
                 onClose={() => setShowPayments(false)}
                 milestone={selectedMilestone}
             />
+            <MilestoneFormModal
+                isOpen={showMilestoneForm}
+                onClose={() => setShowMilestoneForm(false)}
+                onSubmit={handleMilestoneSubmit}
+                milestone={editingMilestone}
+            />
+
+            <Modal isOpen={showEditProject} onClose={() => setShowEditProject(false)} title="Edit Project">
+                <form onSubmit={handleEditProject} className="space-y-4">
+                    <div>
+                        <label className="block text-xs font-semibold text-text-secondary mb-1">Title</label>
+                        <input type="text" value={editForm.title} onChange={e => setEditForm({...editForm, title: e.target.value})} required
+                            className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-bg outline-none focus:border-accent" />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                        <div>
+                            <label className="block text-xs font-semibold text-text-secondary mb-1">Client Name</label>
+                            <input type="text" value={editForm.client_name} onChange={e => setEditForm({...editForm, client_name: e.target.value})} required
+                                className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-bg outline-none focus:border-accent" />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-semibold text-text-secondary mb-1">Client Email</label>
+                            <input type="email" value={editForm.client_email} onChange={e => setEditForm({...editForm, client_email: e.target.value})}
+                                className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-bg outline-none focus:border-accent" />
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                        <div>
+                            <label className="block text-xs font-semibold text-text-secondary mb-1">Amount (₹)</label>
+                            <input type="number" value={editForm.total_amount} onChange={e => setEditForm({...editForm, total_amount: e.target.value})}
+                                className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-bg outline-none focus:border-accent" />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-semibold text-text-secondary mb-1">Status</label>
+                            <select value={editForm.status} onChange={e => setEditForm({...editForm, status: e.target.value})}
+                                className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-bg outline-none focus:border-accent">
+                                <option value="active">Active</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div className="flex gap-3 pt-2">
+                        <Button type="button" variant="outline" onClick={() => setShowEditProject(false)} className="flex-1">Cancel</Button>
+                        <Button type="submit" variant="primary" disabled={editSubmitting} className="flex-1">
+                             {editSubmitting ? 'Saving...' : 'Save Changes'}
+                        </Button>
+                    </div>
+                </form>
+            </Modal>
         </div>
+        
     );
+
+     
 }

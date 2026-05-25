@@ -17,15 +17,13 @@ api.interceptors.request.use((config) => {
 });
 
 // Handle 401 responses globally
-api.interceptors.response.use(
-    (response) => response,
-    (error) => {
-        if (error.response?.status === 401) {
-            localStorage.removeItem('token');
-            window.location.href = '/login';
-        }
-        return Promise.reject(error);
+api.interceptors.request.use((config) => {
+    const token = localStorage.getItem('token');
+    const isShareRoute = config.url.includes('/share/');
+    if (token && !isShareRoute) {
+        config.headers.Authorization = `Bearer ${token}`;
     }
-);
+    return config;
+});
 
 export default api;

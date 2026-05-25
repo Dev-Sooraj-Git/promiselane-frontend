@@ -15,3 +15,9 @@
     --color-danger: #D14343;
     --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
 }
+
+@layer base {
+    button, a, [role="button"], .cursor-pointer {
+        cursor: pointer;
+    }
+}

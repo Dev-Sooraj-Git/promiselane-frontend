@@ -12,7 +12,8 @@ const secondaryItems = [
     { icon: Settings, label: 'Settings', path: '/settings' },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ onExpandedChange }) {
+
     const [expanded, setExpanded] = useState(false);
     const location = useLocation();
 
@@ -26,8 +27,10 @@ export default function Sidebar() {
                 background: 'linear-gradient(180deg, #0B1121 0%, #111A2E 100%)',
                 borderRight: '1px solid rgba(255,255,255,0.04)',
             }}
-            onMouseEnter={() => setExpanded(true)}
-            onMouseLeave={() => setExpanded(false)}
+            // onMouseEnter={() => setExpanded(true)}
+            // onMouseLeave={() => setExpanded(false)}
+               onMouseEnter={() => { setExpanded(true); onExpandedChange?.(true); }}
+               onMouseLeave={() => { setExpanded(false); onExpandedChange?.(false); }}
         >
             {/* Top accent glow */}
             <div className="mx-3 mt-0 h-px bg-gradient-to-r from-transparent via-accent/50 to-transparent"></div>
