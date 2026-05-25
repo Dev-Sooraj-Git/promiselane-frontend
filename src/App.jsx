@@ -7,6 +7,9 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Projects from './pages/Projects';
 import ProjectDetail from './pages/ProjectDetail';
+import ShareView from './pages/ShareView';
+import Timeline from './pages/Timeline';
+
 
 function ProtectedRoute({ children }) {
     const { user, loading } = useAuth();
@@ -24,6 +27,7 @@ function App() {
                     <Route path="/" element={<Home />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
+                    <Route path="/share/:token" element={<ShareView />} />
 
                     {/* Protected routes with Layout */}
                     <Route element={<ProtectedRoute><Layout><Outlet /></Layout></ProtectedRoute>}>
@@ -31,6 +35,7 @@ function App() {
                         {/* <Route path="/projects" element={<div className="p-8 text-stone-600">Projects page coming soon.</div>} /> */}
                         <Route path="/projects" element={<Projects />} />
                         <Route path="/projects/:id" element={<ProjectDetail />} />
+                        <Route path="/projects/:id/timeline" element={<Timeline />} />
                     </Route>
 
                     {/* Catch-all */}
