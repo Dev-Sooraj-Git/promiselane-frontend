@@ -1,16 +1,25 @@
-# React + Vite
+# PromiseLane — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> **From Promise to Payment. All in One Place.**
 
-Currently, two official plugins are available:
+Frontend for PromiseLane — a project governance platform that brings clarity to client-service provider relationships. Track requirements, deliverables, and milestone payments in one shared timeline. Built for professionals who value trust and transparency.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+🌐 [promiselane.in](https://promiselane.in)  (coming soon) | 🚧 Phase 1 In Development
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🛠 Tech Stack
 
-## Expanding the ESLint configuration
+| Layer | Technology |
+|---|---|
+| Framework | React 18 |
+| Build Tool | Vite |
+| Styling | Tailwind CSS (Premium palette) |
+| Icons | Lucide React |
+| Routing | React Router v7 |
+| HTTP Client | Axios |
+| Server State | TanStack React Query |
+| Auth | JWT (stateless, stored in localStorage) |
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
