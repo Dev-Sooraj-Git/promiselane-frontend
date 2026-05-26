@@ -33,9 +33,6 @@ export default function ShareView() {
     const [error, setError] = useState('');
 
     useEffect(() => {
-        console.log('Milestones:', milestones);
-console.log('First milestone:', milestones[0]);
-console.log('Requirements:', milestones[0]?.requirements);
         publicApi
             .get(`/share/${token}`)
             .then((res) => {
