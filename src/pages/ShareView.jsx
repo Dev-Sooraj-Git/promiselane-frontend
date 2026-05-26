@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Wallet, Calendar, CheckCircle2, Clock, FileText, Circle, AlertCircle } from 'lucide-react';
-import axios from 'axios';
+// import axios from 'axios';
+import api from '../api/axios';
 
-const publicApi = axios.create({
-    baseURL: 'http://127.0.0.1:8000/api/v1',
-    headers: { 'Content-Type': 'application/json' },
-});
+// const publicApi = axios.create({
+//     baseURL: 'http://127.0.0.1:8000/api/v1',
+//     headers: { 'Content-Type': 'application/json' },
+// });
 
 const statusIcon = (status) => {
     switch (status) {
@@ -33,7 +34,7 @@ export default function ShareView() {
     const [error, setError] = useState('');
 
     useEffect(() => {
-        publicApi
+        api
             .get(`/share/${token}`)
             .then((res) => {
                 const { project, milestones, timeline } = res.data.data;
