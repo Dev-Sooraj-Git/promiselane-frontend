@@ -7,6 +7,8 @@ import RequirementSection from '../components/RequirementSection';
 import PaymentModal from '../components/PaymentModal';
 import MilestoneFormModal from '../components/MilestoneFormModal';
 import Modal from '../components/ui/Modal';
+import { useNavigate } from 'react-router-dom';
+
 
 export default function ProjectDetail() {
     const { id } = useParams();
@@ -21,6 +23,10 @@ export default function ProjectDetail() {
     const [showEditProject, setShowEditProject] = useState(false);
     const [editForm, setEditForm] = useState({ title: '', client_name: '', client_email: '', description: '', total_amount: '', status: 'active' });
     const [editSubmitting, setEditSubmitting] = useState(false);
+    const [showShareModal, setShowShareModal] = useState(false);
+    const [shareUrl, setShareUrl] = useState('');
+    const [shareLoading, setShareLoading] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -81,7 +87,22 @@ export default function ProjectDetail() {
     const handleDeleteProject = async () => {
         if (!confirm('Delete this entire project? This cannot be undone.')) return;
         await api.delete(`/projects/${id}`);
-        window.location.href = '/projects';
+        // window.location.href = '/projects';
+        navigate('/projects');
+    };
+
+    const handleShare = async () => {
+        setShareLoading(true);
+        try {
+            const res = await api.post(`/projects/${id}/share`);
+            const token = res.data.data.token;
+            setShareUrl(`${window.location.origin}/share/${token}`);
+        } catch (err) {
+            alert('Could not generate share link.');
+        } finally {
+            setShareLoading(false);
+        }
+        setShowShareModal(true);
     };
 
     if (loading) return (
@@ -112,7 +133,7 @@ export default function ProjectDetail() {
                         setEditForm({ title: project.title, client_name: project.client_name, client_email: project.client_email || '', description: project.description || '', total_amount: project.total_amount, status: project.status?.toLowerCase() });
                         setShowEditProject(true);
                     }}><Edit size={13} /> Edit</Button>
-                    <Button variant="outline" className="btn-sm"><Share2 size={13} /> Share</Button>
+                    <Button variant="outline" className="btn-sm" onClick={handleShare}><Share2 size={13} /> Share</Button>
                     <Link to={`/projects/${id}/timeline`}>
                             <Button variant="outline" className="btn-sm"><Clock size={13} /> Timeline</Button>
                     </Link>
@@ -299,9 +320,37 @@ export default function ProjectDetail() {
                     </div>
                 </form>
             </Modal>
-        </div>
-        
-    );
 
-     
+            <Modal isOpen={showShareModal} onClose={() => setShowShareModal(false)} title="Share Project">
+                <div className="space-y-4">
+                    <p className="text-sm text-text-secondary">Share this link with your client. They can view the project without logging in.</p>
+                    
+                    {shareUrl ? (
+                        <div className="flex items-center gap-2">
+                            <input type="text" value={shareUrl} readOnly
+                                className="flex-1 px-3 py-2 border border-border rounded-lg text-sm bg-bg outline-none" />
+                            <Button variant="primary" className="btn-sm" onClick={() => { navigator.clipboard.writeText(shareUrl); alert('Copied!'); }}>
+                                Copy
+                            </Button>
+                        </div>
+                    ) : (
+                        <p className="text-sm text-text-muted">Loading share link...</p>
+                    )}
+                    {shareUrl && (
+                        <Button variant="danger" className="btn-sm" onClick={async () => {
+                            await api.delete(`/projects/${id}/share`);
+                            setShareUrl('');
+                            alert('Share link revoked.');
+                        }}>
+                            Revoke Link
+                        </Button>
+                    )}
+                    <div className="flex gap-3 pt-2">
+                        <Button variant="outline" onClick={() => setShowShareModal(false)} className="flex-1">Close</Button>
+                    </div>
+                </div>
+            </Modal>
+
+        </div>
+    );
 }
