@@ -39,9 +39,13 @@ export function AuthProvider({ children }) {
         return res.data;
     };
 
-    const logout = () => {
-        api.post("/auth/logout");
-        localStorage.removeItem("token");
+    const logout = async () => {
+        try {
+            await api.post('/auth/logout');
+        } catch (err) {
+            // Token already expired or invalid — ignore
+        }
+        localStorage.removeItem('token');
         setUser(null);
     };
 
