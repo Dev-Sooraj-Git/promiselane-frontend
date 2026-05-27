@@ -91,12 +91,35 @@ export default function ProjectDetail() {
         navigate('/projects');
     };
 
+    // const handleShare = async () => {
+    //     setShareLoading(true);
+    //     try {
+    //         const res = await api.post(`/projects/${id}/share`);
+    //         const token = res.data.data.token;
+    //         setShareUrl(`${window.location.origin}/share/${token}`);
+    //     } catch (err) {
+    //         alert('Could not generate share link.');
+    //     } finally {
+    //         setShareLoading(false);
+    //     }
+    //     setShowShareModal(true);
+    // };
+
     const handleShare = async () => {
-        setShareLoading(true);
+    // If project already has a share token, show existing link
+    if (project.share_token) {
+        setShareUrl(`${window.location.origin}/share/${project.share_token}`);
+        setShowShareModal(true);
+        return;
+    }
+
+    // Otherwise generate a new one
+    setShareLoading(true);
         try {
             const res = await api.post(`/projects/${id}/share`);
             const token = res.data.data.token;
             setShareUrl(`${window.location.origin}/share/${token}`);
+            setProject({ ...project, share_token: token });
         } catch (err) {
             alert('Could not generate share link.');
         } finally {
@@ -340,10 +363,9 @@ export default function ProjectDetail() {
                         <Button variant="danger" className="btn-sm" onClick={async () => {
                             await api.delete(`/projects/${id}/share`);
                             setShareUrl('');
+                            setProject({ ...project, share_token: null });  // ← Add this line
                             alert('Share link revoked.');
-                        }}>
-                            Revoke Link
-                        </Button>
+                        }}>Revoke Link</Button>
                     )}
                     <div className="flex gap-3 pt-2">
                         <Button variant="outline" onClick={() => setShowShareModal(false)} className="flex-1">Close</Button>
