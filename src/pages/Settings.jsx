@@ -22,6 +22,9 @@ export default function Settings() {
     const [showCurrent, setShowCurrent] = useState(false);
     const [showNew, setShowNew] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
+    const [profileName, setProfileName] = useState(user?.name || '');
+    const [profileMsg, setProfileMsg] = useState('');
+    const [profileLoading, setProfileLoading] = useState(false);
 
     const showSaved = () => { setSaved(true); setTimeout(() => setSaved(false), 2500); };
 
@@ -79,6 +82,21 @@ export default function Settings() {
         } finally {
             setPasswordLoading(false);
             setTimeout(() => setPasswordMsg(''), 3000);
+        }
+    };
+
+    const handleProfileSubmit = async (e) => {
+        e.preventDefault();
+        setProfileMsg('');
+        setProfileLoading(true);
+        try {
+            const res = await api.put('/auth/profile', { name: profileName });
+            setProfileMsg(res.data.message);
+        } catch (err) {
+            setProfileMsg(err.response?.data?.message || 'Failed to update profile.');
+        } finally {
+            setProfileLoading(false);
+            setTimeout(() => setProfileMsg(''), 3000);
         }
     };
 
@@ -146,35 +164,40 @@ export default function Settings() {
                     {/* Profile */}
                     {activeSection === 'profile' && (
                         <Card padding="p-6">
-                            <div className="flex items-center gap-3 mb-5">
-                                <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
-                                    <User size={18} className="text-accent" />
+                            {profileMsg && (
+                                <div className={`text-xs px-3 py-2 rounded-lg mb-3 ${
+                                    profileMsg.toLowerCase().includes('success')
+                                        ? 'bg-success/5 border border-success/20 text-success'
+                                        : 'bg-accent/5 border border-accent/20 text-accent'
+                                }`}>
+                                    {profileMsg}
                                 </div>
-                                <div>
-                                    <h2 className="text-base font-semibold text-text">Profile Information</h2>
-                                    <p className="text-xs text-text-muted">Update your name and contact details.</p>
-                                </div>
-                            </div>
+                            )}
 
-                            <div className="space-y-4">
-                                <div>
-                                    <label className="block text-xs font-semibold text-text-secondary mb-1">Full Name</label>
-                                    <input type="text" defaultValue={user?.name}
-                                        className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-bg outline-none focus:border-accent transition-colors" />
+                            <form onSubmit={handleProfileSubmit}>
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="block text-xs font-semibold text-text-secondary mb-1">Full Name</label>
+                                        <input
+                                            type="text"
+                                            value={profileName}
+                                            onChange={e => setProfileName(e.target.value)}
+                                            required
+                                            className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-bg outline-none focus:border-accent transition-colors"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-semibold text-text-secondary mb-1">Email</label>
+                                        <input type="email" defaultValue={user?.email} disabled
+                                            className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-border/30 text-text-muted outline-none" />
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <Button type="submit" variant="primary" disabled={profileLoading}>
+                                            {profileLoading ? 'Saving...' : 'Save Changes'}
+                                        </Button>
+                                    </div>
                                 </div>
-                                <div>
-                                    <label className="block text-xs font-semibold text-text-secondary mb-1">Email</label>
-                                    <input type="email" defaultValue={user?.email} disabled
-                                        className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-border/30 text-text-muted outline-none" />
-                                    <p className="text-[10px] text-text-muted mt-1">Contact support to change your email.</p>
-                                </div>
-                                <div className="flex items-center gap-3">
-                                    <Button variant="primary" onClick={showSaved}>
-                                        {saved ? <><Check size={14} /> Saved</> : 'Save Changes'}
-                                    </Button>
-                                    <Button variant="outline">Cancel</Button>
-                                </div>
-                            </div>
+                            </form>
                         </Card>
                     )}
 
