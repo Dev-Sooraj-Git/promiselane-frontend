@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import {
     User, Mail, Shield, Bell, Globe, LogOut, ChevronRight,
-    Lock, CreditCard, Info, AlertTriangle, Check
+    Lock, CreditCard, Info, AlertTriangle, Check, Eye, EyeOff
 } from 'lucide-react';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
@@ -19,6 +19,9 @@ export default function Settings() {
     });
     const [passwordMsg, setPasswordMsg] = useState('');
     const [passwordLoading, setPasswordLoading] = useState(false);
+    const [showCurrent, setShowCurrent] = useState(false);
+    const [showNew, setShowNew] = useState(false);
+    const [showConfirm, setShowConfirm] = useState(false);
 
     const showSaved = () => { setSaved(true); setTimeout(() => setSaved(false), 2500); };
 
@@ -55,6 +58,19 @@ export default function Settings() {
         setPasswordMsg('');
         setPasswordLoading(true);
         try {
+
+            if (passwordForm.new_password !== passwordForm.new_password_confirmation) {
+                setPasswordMsg('Passwords do not match.');
+                setTimeout(() => setPasswordMsg(''), 3000);
+                return;
+            }
+
+            if (passwordForm.new_password.length < 8) {
+                setPasswordMsg('Password must be at least 8 characters.');
+                setTimeout(() => setPasswordMsg(''), 3000);
+                return;
+            }
+
             const res = await api.post('/auth/change-password', passwordForm);
             setPasswordMsg(res.data.message);
             setPasswordForm({ current_password: '', new_password: '', new_password_confirmation: '' });
@@ -161,7 +177,7 @@ export default function Settings() {
                             </div>
                         </Card>
                     )}
-                    
+
                    {/* Security */}
                     {activeSection === 'security' && (
                         <Card padding="p-6">
@@ -187,30 +203,48 @@ export default function Settings() {
 
                             <form onSubmit={handlePasswordSubmit}>
                                 <div className="space-y-3 max-w-md">
-                                    <input
-                                        type="password"
-                                        placeholder="Current password"
-                                        value={passwordForm.current_password}
-                                        onChange={e => setPasswordForm({...passwordForm, current_password: e.target.value})}
-                                        required
-                                        className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-bg outline-none focus:border-accent transition-colors"
-                                    />
-                                    <input
-                                        type="password"
-                                        placeholder="New password"
-                                        value={passwordForm.new_password}
-                                        onChange={e => setPasswordForm({...passwordForm, new_password: e.target.value})}
-                                        required
-                                        className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-bg outline-none focus:border-accent transition-colors"
-                                    />
-                                    <input
-                                        type="password"
-                                        placeholder="Confirm new password"
-                                        value={passwordForm.new_password_confirmation}
-                                        onChange={e => setPasswordForm({...passwordForm, new_password_confirmation: e.target.value})}
-                                        required
-                                        className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-bg outline-none focus:border-accent transition-colors"
-                                    />
+                                   <div className="relative">
+                                        <input
+                                            type={showCurrent ? 'text' : 'password'}
+                                            placeholder="Current password"
+                                            value={passwordForm.current_password}
+                                            onChange={e => setPasswordForm({...passwordForm, current_password: e.target.value})}
+                                            required
+                                            className="w-full px-3 py-2 pr-10 border border-border rounded-lg text-sm bg-bg outline-none focus:border-accent transition-colors"
+                                        />
+                                        <button type="button" onClick={() => setShowCurrent(!showCurrent)}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text">
+                                            {showCurrent ? <EyeOff size={16} /> : <Eye size={16} />}
+                                        </button>
+                                    </div>
+                                    <div className="relative">
+                                        <input
+                                            type={showNew ? 'text' : 'password'}
+                                            placeholder="New password"
+                                            value={passwordForm.new_password}
+                                            onChange={e => setPasswordForm({...passwordForm, new_password: e.target.value})}
+                                            required
+                                            className="w-full px-3 py-2 pr-10 border border-border rounded-lg text-sm bg-bg outline-none focus:border-accent transition-colors"
+                                        />
+                                        <button type="button" onClick={() => setShowNew(!showNew)}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text">
+                                            {showNew ? <EyeOff size={16} /> : <Eye size={16} />}
+                                        </button>
+                                    </div>
+                                    <div className="relative">
+                                        <input
+                                            type={showConfirm ? 'text' : 'password'}
+                                            placeholder="Confirm new password"
+                                            value={passwordForm.new_password_confirmation}
+                                            onChange={e => setPasswordForm({...passwordForm, new_password_confirmation: e.target.value})}
+                                            required
+                                            className="w-full px-3 py-2 pr-10 border border-border rounded-lg text-sm bg-bg outline-none focus:border-accent transition-colors"
+                                        />
+                                        <button type="button" onClick={() => setShowConfirm(!showConfirm)}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text">
+                                            {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
+                                        </button>
+                                    </div>
                                     <div className="flex items-center gap-3 pt-1">
                                         <Button type="submit" variant="primary" disabled={passwordLoading}>
                                             {passwordLoading ? 'Updating...' : 'Update Password'}
