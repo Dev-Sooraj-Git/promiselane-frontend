@@ -1,126 +1,297 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { User, Mail, Shield, Bell, Globe, LogOut, ChevronRight } from 'lucide-react';
+import {
+    User, Mail, Shield, Bell, Globe, LogOut, ChevronRight,
+    Lock, CreditCard, Info, AlertTriangle, Check
+} from 'lucide-react';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
+import api from '../api/axios';
 
 export default function Settings() {
     const { user } = useAuth();
-    const [activeTab, setActiveTab] = useState('profile');
+    const [activeSection, setActiveSection] = useState('profile');
+    const [saved, setSaved] = useState(false);
+    const [passwordForm, setPasswordForm] = useState({
+        current_password: '',
+        new_password: '',
+        new_password_confirmation: '',
+    });
+    const [passwordMsg, setPasswordMsg] = useState('');
+    const [passwordLoading, setPasswordLoading] = useState(false);
 
-    const tabs = [
-        { id: 'profile', label: 'Profile', icon: User },
-        { id: 'security', label: 'Security', icon: Shield },
-        { id: 'notifications', label: 'Notifications', icon: Bell },
-        { id: 'preferences', label: 'Preferences', icon: Globe },
+    const showSaved = () => { setSaved(true); setTimeout(() => setSaved(false), 2500); };
+
+    const sections = [
+        {
+            id: 'account',
+            label: 'Account',
+            icon: User,
+            subsections: [
+                { id: 'profile', label: 'Profile', icon: User },
+                { id: 'security', label: 'Security', icon: Lock },
+            ],
+        },
+        {
+            id: 'notifications',
+            label: 'Notifications',
+            icon: Bell,
+            subsections: [
+                { id: 'notifications', label: 'Email Alerts', icon: Bell },
+            ],
+        },
+        {
+            id: 'preferences',
+            label: 'Preferences',
+            icon: Globe,
+            subsections: [
+                { id: 'preferences', label: 'Display & Format', icon: Globe },
+            ],
+        },
     ];
 
-    return (
-        <div className="max-w-4xl mx-auto px-6 py-8">
-            <h1 className="text-xl font-bold text-primary mb-6">Account Settings</h1>
+    const handlePasswordSubmit = async (e) => {
+        e.preventDefault();
+        setPasswordMsg('');
+        setPasswordLoading(true);
+        try {
+            const res = await api.post('/auth/change-password', passwordForm);
+            setPasswordMsg(res.data.message);
+            setPasswordForm({ current_password: '', new_password: '', new_password_confirmation: '' });
+        } catch (err) {
+            setPasswordMsg(err.response?.data?.message || 'Failed to change password.');
+        } finally {
+            setPasswordLoading(false);
+            setTimeout(() => setPasswordMsg(''), 3000);
+        }
+    };
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                {/* Sidebar Tabs */}
-                <div className="space-y-1">
-                    {tabs.map((tab) => {
-                        const Icon = tab.icon;
+    return (
+        <div className="max-w-5xl mx-auto px-6 py-8">
+            {/* Header */}
+            <div className="mb-8">
+                <h1 className="text-2xl font-bold text-primary tracking-tight">Settings</h1>
+                <p className="text-sm text-text-muted mt-1">Manage your account, security, and preferences.</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+                {/* Left Sidebar — Section Navigation */}
+                <div className="md:col-span-1 space-y-1">
+                    {sections.map((section) => {
+                        const Icon = section.icon;
+                        const isActive = section.subsections.some(sub => sub.id === activeSection);
                         return (
-                            <button
-                                key={tab.id}
-                                onClick={() => setActiveTab(tab.id)}
-                                className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
-                                    activeTab === tab.id
-                                        ? 'bg-accent/8 text-accent border border-accent/20'
-                                        : 'text-text-secondary hover:bg-bg'
-                                }`}
-                            >
-                                <Icon size={15} />
-                                {tab.label}
-                                <ChevronRight size={13} className="ml-auto opacity-40" />
-                            </button>
+                            <div key={section.id}>
+                                <button
+                                    onClick={() => setActiveSection(section.subsections[0].id)}
+                                    className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                                        isActive
+                                            ? 'bg-accent/8 text-accent border border-accent/20'
+                                            : 'text-text-secondary hover:bg-bg border border-transparent'
+                                    }`}
+                                >
+                                    <Icon size={16} />
+                                    <span>{section.label}</span>
+                                    <ChevronRight size={13} className="ml-auto opacity-40" />
+                                </button>
+                                {isActive && (
+                                    <div className="ml-6 mt-1 space-y-1">
+                                        {section.subsections.map((sub) => (
+                                            <button
+                                                key={sub.id}
+                                                onClick={() => setActiveSection(sub.id)}
+                                                className={`w-full flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs transition-all ${
+                                                    activeSection === sub.id
+                                                        ? 'text-accent font-semibold'
+                                                        : 'text-text-muted hover:text-text'
+                                                }`}
+                                            >
+                                                <sub.icon size={12} />
+                                                {sub.label}
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
                         );
                     })}
 
-                    <div className="pt-4 mt-4 border-t border-border">
+                    {/* Divider */}
+                    <div className="pt-4 mt-4 border-t border-border space-y-1">
                         <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-danger hover:bg-danger/5 transition-all">
-                            <LogOut size={15} />
+                            <LogOut size={16} />
                             Sign Out
                         </button>
                     </div>
                 </div>
 
-                {/* Content */}
-                <div className="md:col-span-3">
-                    {activeTab === 'profile' && (
-                        <Card>
-                            <h2 className="text-sm font-semibold text-text mb-1">Profile Information</h2>
-                            <p className="text-xs text-text-muted mb-5">Update your name and contact details.</p>
+                {/* Right Content Area */}
+                <div className="md:col-span-4">
+                    {/* Profile */}
+                    {activeSection === 'profile' && (
+                        <Card padding="p-6">
+                            <div className="flex items-center gap-3 mb-5">
+                                <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
+                                    <User size={18} className="text-accent" />
+                                </div>
+                                <div>
+                                    <h2 className="text-base font-semibold text-text">Profile Information</h2>
+                                    <p className="text-xs text-text-muted">Update your name and contact details.</p>
+                                </div>
+                            </div>
 
                             <div className="space-y-4">
                                 <div>
                                     <label className="block text-xs font-semibold text-text-secondary mb-1">Full Name</label>
                                     <input type="text" defaultValue={user?.name}
-                                        className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-bg outline-none focus:border-accent" />
+                                        className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-bg outline-none focus:border-accent transition-colors" />
                                 </div>
                                 <div>
                                     <label className="block text-xs font-semibold text-text-secondary mb-1">Email</label>
                                     <input type="email" defaultValue={user?.email} disabled
                                         className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-border/30 text-text-muted outline-none" />
+                                    <p className="text-[10px] text-text-muted mt-1">Contact support to change your email.</p>
                                 </div>
-                                <Button variant="primary">Save Changes</Button>
+                                <div className="flex items-center gap-3">
+                                    <Button variant="primary" onClick={showSaved}>
+                                        {saved ? <><Check size={14} /> Saved</> : 'Save Changes'}
+                                    </Button>
+                                    <Button variant="outline">Cancel</Button>
+                                </div>
+                            </div>
+                        </Card>
+                    )}
+                    
+                   {/* Security */}
+                    {activeSection === 'security' && (
+                        <Card padding="p-6">
+                            <div className="flex items-center gap-3 mb-5">
+                                <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
+                                    <Lock size={18} className="text-accent" />
+                                </div>
+                                <div>
+                                    <h2 className="text-base font-semibold text-text">Change Password</h2>
+                                    <p className="text-xs text-text-muted">Use a strong, unique password.</p>
+                                </div>
+                            </div>
+
+                            {passwordMsg && (
+                                <div className={`text-xs px-3 py-2 rounded-lg mb-3 ${
+                                    passwordMsg.toLowerCase().includes('success')
+                                        ? 'bg-success/5 border border-success/20 text-success'
+                                        : 'bg-accent/5 border border-accent/20 text-accent'
+                                }`}>
+                                    {passwordMsg}
+                                </div>
+                            )}
+
+                            <form onSubmit={handlePasswordSubmit}>
+                                <div className="space-y-3 max-w-md">
+                                    <input
+                                        type="password"
+                                        placeholder="Current password"
+                                        value={passwordForm.current_password}
+                                        onChange={e => setPasswordForm({...passwordForm, current_password: e.target.value})}
+                                        required
+                                        className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-bg outline-none focus:border-accent transition-colors"
+                                    />
+                                    <input
+                                        type="password"
+                                        placeholder="New password"
+                                        value={passwordForm.new_password}
+                                        onChange={e => setPasswordForm({...passwordForm, new_password: e.target.value})}
+                                        required
+                                        className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-bg outline-none focus:border-accent transition-colors"
+                                    />
+                                    <input
+                                        type="password"
+                                        placeholder="Confirm new password"
+                                        value={passwordForm.new_password_confirmation}
+                                        onChange={e => setPasswordForm({...passwordForm, new_password_confirmation: e.target.value})}
+                                        required
+                                        className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-bg outline-none focus:border-accent transition-colors"
+                                    />
+                                    <div className="flex items-center gap-3 pt-1">
+                                        <Button type="submit" variant="primary" disabled={passwordLoading}>
+                                            {passwordLoading ? 'Updating...' : 'Update Password'}
+                                        </Button>
+                                        <Button type="button" variant="outline" onClick={() => setPasswordForm({ current_password: '', new_password: '', new_password_confirmation: '' })}>
+                                            Cancel
+                                        </Button>
+                                    </div>
+                                </div>
+                            </form>
+
+                            {/* Danger Zone */}
+                            <div className="mt-8 pt-6 border-t border-border">
+                                <div className="flex items-center gap-3 mb-3">
+                                    <div className="w-10 h-10 rounded-xl bg-danger/10 flex items-center justify-center">
+                                        <AlertTriangle size={18} className="text-danger" />
+                                    </div>
+                                    <div>
+                                        <h2 className="text-base font-semibold text-text">Danger Zone</h2>
+                                        <p className="text-xs text-text-muted">Irreversible actions.</p>
+                                    </div>
+                                </div>
+                                <button disabled
+                                    className="px-4 py-2 border border-danger/30 text-danger/50 rounded-lg text-sm font-medium cursor-not-allowed opacity-50">
+                                    Delete Account — Coming Soon
+                                </button>
                             </div>
                         </Card>
                     )}
 
-                    {activeTab === 'security' && (
-                        <Card>
-                            <h2 className="text-sm font-semibold text-text mb-1">Change Password</h2>
-                            <p className="text-xs text-text-muted mb-5">Use a strong password that you don't use elsewhere.</p>
-
-                            <div className="space-y-3">
-                                <input type="password" placeholder="Current password"
-                                    className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-bg outline-none focus:border-accent" />
-                                <input type="password" placeholder="New password"
-                                    className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-bg outline-none focus:border-accent" />
-                                <input type="password" placeholder="Confirm new password"
-                                    className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-bg outline-none focus:border-accent" />
-                                <Button variant="primary">Update Password</Button>
+                    {/* Notifications */}
+                    {activeSection === 'notifications' && (
+                        <Card padding="p-6">
+                            <div className="flex items-center gap-3 mb-5">
+                                <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
+                                    <Bell size={18} className="text-accent" />
+                                </div>
+                                <div>
+                                    <h2 className="text-base font-semibold text-text">Email Notifications</h2>
+                                    <p className="text-xs text-text-muted">Control which emails you receive.</p>
+                                </div>
                             </div>
-                        </Card>
-                    )}
 
-                    {activeTab === 'notifications' && (
-                        <Card>
-                            <h2 className="text-sm font-semibold text-text mb-1">Notification Preferences</h2>
-                            <p className="text-xs text-text-muted mb-5">Control which emails you receive.</p>
-
-                            <div className="space-y-4">
+                            <div className="space-y-1 max-w-lg">
                                 {[
-                                    { label: 'Payment reminders', desc: 'When a milestone payment is due' },
+                                    { label: 'Payment reminders', desc: 'When a milestone payment is due or received' },
                                     { label: 'Project updates', desc: 'When a milestone status changes' },
-                                    { label: 'Deadline alerts', desc: 'Before a milestone deadline' },
+                                    { label: 'Deadline alerts', desc: '24 hours before a milestone deadline' },
                                 ].map((item, i) => (
-                                    <div key={i} className="flex items-center justify-between py-2 border-b border-border last:border-0">
+                                    <div key={i} className="flex items-center justify-between py-3 px-3 rounded-lg hover:bg-bg transition-colors">
                                         <div>
                                             <p className="text-sm font-medium text-text">{item.label}</p>
                                             <p className="text-xs text-text-muted">{item.desc}</p>
                                         </div>
-                                        <input type="checkbox" defaultChecked className="w-4 h-4 rounded border-border text-accent focus:ring-accent" />
+                                        <label className="relative inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" defaultChecked className="sr-only peer" />
+                                            <div className="w-9 h-5 bg-border rounded-full peer peer-checked:bg-accent peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
+                                        </label>
                                     </div>
                                 ))}
                             </div>
                         </Card>
                     )}
 
-                    {activeTab === 'preferences' && (
-                        <Card>
-                            <h2 className="text-sm font-semibold text-text mb-1">Display Preferences</h2>
-                            <p className="text-xs text-text-muted mb-5">Customize your experience.</p>
+                    {/* Preferences */}
+                    {activeSection === 'preferences' && (
+                        <Card padding="p-6">
+                            <div className="flex items-center gap-3 mb-5">
+                                <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
+                                    <Globe size={18} className="text-accent" />
+                                </div>
+                                <div>
+                                    <h2 className="text-base font-semibold text-text">Display Preferences</h2>
+                                    <p className="text-xs text-text-muted">Customize how PromiseLane looks.</p>
+                                </div>
+                            </div>
 
-                            <div className="space-y-4">
+                            <div className="space-y-4 max-w-md">
                                 <div>
                                     <label className="block text-xs font-semibold text-text-secondary mb-1">Currency</label>
-                                    <select className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-bg outline-none focus:border-accent">
+                                    <select className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-bg outline-none focus:border-accent transition-colors">
                                         <option>INR (₹)</option>
                                         <option>USD ($)</option>
                                         <option>EUR (€)</option>
@@ -128,16 +299,24 @@ export default function Settings() {
                                 </div>
                                 <div>
                                     <label className="block text-xs font-semibold text-text-secondary mb-1">Date Format</label>
-                                    <select className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-bg outline-none focus:border-accent">
+                                    <select className="w-full px-3 py-2 border border-border rounded-lg text-sm bg-bg outline-none focus:border-accent transition-colors">
                                         <option>DD/MM/YYYY</option>
                                         <option>MM/DD/YYYY</option>
                                     </select>
                                 </div>
-                                <Button variant="primary">Save Preferences</Button>
+                                <div className="flex items-center gap-3 pt-1">
+                                    <Button variant="primary">Save Preferences</Button>
+                                    <Button variant="outline">Cancel</Button>
+                                </div>
                             </div>
                         </Card>
                     )}
                 </div>
+            </div>
+
+            {/* Footer */}
+            <div className="mt-12 pt-6 border-t border-border text-center text-xs text-text-muted">
+                <p>PromiseLane v1.0.0</p>
             </div>
         </div>
     );
