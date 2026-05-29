@@ -10,6 +10,8 @@ import ProjectDetail from './pages/ProjectDetail';
 import ShareView from './pages/ShareView';
 import Timeline from './pages/Timeline';
 import Settings from './pages/Settings';
+import Feedback from './pages/Feedback';
+import Privacy from './pages/Privacy';
 
 
 function ProtectedRoute({ children }) {
@@ -29,6 +31,7 @@ function App() {
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
                     <Route path="/share/:token" element={<ShareView />} />
+                    <Route path="/privacy" element={<Privacy />} /> 
 
                     {/* Protected routes with Layout */}
                     <Route element={<ProtectedRoute><Layout><Outlet /></Layout></ProtectedRoute>}>
@@ -38,6 +41,7 @@ function App() {
                         <Route path="/projects/:id" element={<ProjectDetail />} />
                         <Route path="/projects/:id/timeline" element={<Timeline />} />
                         <Route path="/settings" element={<Settings />} />
+                        <Route path="/feedback" element={<Feedback />} />
                     </Route>
 
                     {/* Catch-all */}

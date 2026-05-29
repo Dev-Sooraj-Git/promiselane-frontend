@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, FolderKanban, Clock, Settings } from 'lucide-react';
+import { LayoutDashboard, FolderKanban, Clock, Settings, MessageSquare } from 'lucide-react';
 
 const navItems = [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
@@ -10,6 +10,7 @@ const navItems = [
 
 const secondaryItems = [
     { icon: Settings, label: 'Settings', path: '/settings' },
+    { icon: MessageSquare, label: 'Feedback', path: '/feedback' },
 ];
 
 export default function Sidebar({ onExpandedChange }) {
