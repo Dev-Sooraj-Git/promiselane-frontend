@@ -122,8 +122,10 @@ export default function Home() {
             </section>
 
             {/* Footer */}
-            <footer className="border-t border-border py-7 text-center text-text-muted text-xs">
-                © 2026 PromiseLane. All rights reserved. Built for freelancers, by a freelancer.
+            <footer className="border-t border-border py-7 text-center text-text-muted text-xs space-x-4">
+                <span>© 2026 PromiseLane. From promise to payment.</span>
+                <Link to="/privacy" className="hover:underline">Privacy Policy</Link>
+                <Link to="/feedback" className="hover:underline">Feedback</Link>
             </footer>
         </div>
     );
