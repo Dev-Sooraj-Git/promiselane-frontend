@@ -10,6 +10,7 @@ import ProjectDetail from './pages/ProjectDetail';
 import ShareView from './pages/ShareView';
 import Timeline from './pages/Timeline';
 import Settings from './pages/Settings';
+import Feedback from './pages/Feedback';
 
 
 function ProtectedRoute({ children }) {
@@ -38,6 +39,7 @@ function App() {
                         <Route path="/projects/:id" element={<ProjectDetail />} />
                         <Route path="/projects/:id/timeline" element={<Timeline />} />
                         <Route path="/settings" element={<Settings />} />
+                        <Route path="/feedback" element={<Feedback />} />
                     </Route>
 
                     {/* Catch-all */}
