@@ -270,6 +270,7 @@ export default function ShareView() {
                             </Link>{' '}
                             — From promise to payment.
                         </span>
+                        <Link to="/privacy" className="text-xs hover:underline">Privacy</Link>
                     </div>
                 </div>
             </main>
