@@ -306,7 +306,7 @@ export default function Settings() {
                                     <Bell size={18} className="text-accent" />
                                 </div>
                                 <div>
-                                    <h2 className="text-base font-semibold text-text">Email Notifications</h2>
+                                    <h2 className="text-base font-semibold text-text">Email Notifications<span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-100 text-amber-700 ml-2">Coming Soon</span></h2>
                                     <p className="text-xs text-text-muted">Control which emails you receive.</p>
                                 </div>
                             </div>
@@ -340,7 +340,7 @@ export default function Settings() {
                                     <Globe size={18} className="text-accent" />
                                 </div>
                                 <div>
-                                    <h2 className="text-base font-semibold text-text">Display Preferences</h2>
+                                    <h2 className="text-base font-semibold text-text">Display Preferences<span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-100 text-amber-700 ml-2">Coming Soon</span></h2>
                                     <p className="text-xs text-text-muted">Customize how PromiseLane looks.</p>
                                 </div>
                             </div>
