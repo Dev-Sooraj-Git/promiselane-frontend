@@ -21,4 +21,10 @@ Frontend for PromiseLane — a project governance platform. Built with React and
 
 ---
 
-## Project Structure
+## Related
+
+- 🔗 [PromiseLane API](https://github.com/Dev-Sooraj-Git/promiselane-api) *(Laravel 12)*
+
+---
+
+*This is a proprietary product. Source code shared for portfolio demonstration only.*
