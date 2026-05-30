@@ -2,24 +2,23 @@
 
 > **From Promise to Payment. All in One Place.**
 
-Frontend for PromiseLane — a project governance platform that brings clarity to client-service provider relationships. Track requirements, deliverables, and milestone payments in one shared timeline. Built for professionals who value trust and transparency.
+Frontend for PromiseLane — a project governance platform. Built with React and Tailwind CSS.
 
-🌐 [promiselane.in](https://promiselane.in)  (coming soon) | 🚧 Phase 1 In Development
+🌐 [promiselane.in](https://promiselane.in) (coming soon)
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 | Layer | Technology |
 |---|---|
-| Framework | React 18 |
-| Build Tool | Vite |
-| Styling | Tailwind CSS (Premium palette) |
+| Framework | React 18 (Vite) |
+| Styling | Tailwind CSS |
 | Icons | Lucide React |
-| Routing | React Router v7 |
+| Routing | React Router |
 | HTTP Client | Axios |
-| Server State | TanStack React Query |
-| Auth | JWT (stateless, stored in localStorage) |
+| Auth | JWT (stateless) |
 
 ---
 
+## Project Structure
