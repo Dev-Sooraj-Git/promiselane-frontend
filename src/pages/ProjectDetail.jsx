@@ -201,21 +201,23 @@ export default function ProjectDetail() {
                                         : 'hover:bg-bg border border-transparent'
                                 }`}>
                                 <div className="flex items-center gap-2.5 mb-1">
-                                    <span className={`w-2 h-2 rounded-full flex-shrink-0 ${
-                                        m.status === 'paid' ? 'bg-success shadow-[0_0_0_3px_rgba(45,138,110,0.12)]' :
-                                        m.status === 'in_progress' ? 'bg-accent shadow-[0_0_0_3px_rgba(229,168,75,0.12)]' :
-                                        'bg-border'
-                                    }`}></span>
                                     <span className="text-[13px] font-semibold text-text truncate">{m.title}</span>
+                                    <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full flex-shrink-0 ${
+                                        m.status === 'paid' ? 'bg-success/10 text-success' :
+                                        m.status === 'in_progress' ? 'bg-accent/10 text-accent' :
+                                        'bg-border/30 text-text-muted'
+                                    }`}>
+                                        {m.status?.replace('_', ' ')}
+                                    </span>
                                     <span className="text-xs font-semibold text-accent ml-auto flex-shrink-0">₹{Number(m.amount).toLocaleString('en-IN')}</span>
                                 </div>
-                                <div className="text-[11px] text-text-muted ml-4">
+                                <div className="text-[11px] text-text-muted ml-0">
                                     {m.status === 'paid' ? `Paid ${new Date(m.paid_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}` :
                                      m.due_date ? `Due ${new Date(m.due_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}` : 'No due date'}
                                 </div>
                                 {/* Payment quick view button */}
                                 <button className="mt-2 w-full flex items-center justify-center gap-1 px-2 py-1 rounded-md text-[10px] font-semibold border border-success/20 bg-success/5 text-success hover:bg-success/10 transition-colors"
-                                    onClick={(e) => { e.stopPropagation();   setSelectedMilestone(m);  setShowPayments(true); }}>
+                                    onClick={(e) => { e.stopPropagation();   setSelectedMilestone(m);   setTimeout(() => setShowPayments(true), 50); }}>
                                     <Wallet size={10} /> View Payments
                                 </button>
                             </div>
