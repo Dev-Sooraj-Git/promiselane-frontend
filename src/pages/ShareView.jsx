@@ -51,6 +51,8 @@ export default function ShareView() {
             .finally(() => setLoading(false));
     }, [token]);
 
+    console.log(project);
+
     const totalMilestones = milestones.length;
     const completedMilestones = milestones.filter((m) => ['approved', 'paid'].includes(m.status)).length;
     const progressPct = totalMilestones > 0 ? Math.round((completedMilestones / totalMilestones) * 100) : 0;
@@ -111,7 +113,7 @@ export default function ShareView() {
                     </div>
                     <div className="text-center">
                         <p className="text-[10px] text-text-muted uppercase tracking-wider">Shared by</p>
-                        <p className="text-sm font-semibold text-text">Freelancer</p>
+                        <p className="text-sm font-semibold text-text">{project?.user?.name || 'A PromiseLane User'}</p>
                     </div>
                     <span
                         className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${project?.status === 'active' ? 'bg-success/10 text-success' : 'bg-border/50 text-text-muted'}`}
