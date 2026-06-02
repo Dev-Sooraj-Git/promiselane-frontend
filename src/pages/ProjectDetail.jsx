@@ -182,7 +182,7 @@ export default function ProjectDetail() {
                 <div className="w-[300px] border-r border-border bg-card flex flex-col flex-shrink-0">
                     <div className="flex items-center justify-between px-4 py-3 border-b border-border">
                         <h2 className="text-[13px] font-semibold text-text">Milestones</h2>
-                       <Button variant="primary" className="btn-xs" onClick={() => { setEditingMilestone(null); setShowMilestoneForm(true); }}>
+                       <Button variant="primary" className="!px-3 !py-2 !text-[10px]" onClick={() => { setEditingMilestone(null); setShowMilestoneForm(true); }}>
                             <Plus size={12} /> Add
                         </Button>
                     </div>
