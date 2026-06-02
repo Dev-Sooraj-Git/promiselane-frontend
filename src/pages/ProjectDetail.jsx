@@ -27,6 +27,7 @@ export default function ProjectDetail() {
     const [shareUrl, setShareUrl] = useState('');
     const [shareLoading, setShareLoading] = useState(false);
     const navigate = useNavigate();
+    const [milestoneSearch, setMilestoneSearch] = useState('');
 
     useEffect(() => {
         const fetchData = async () => {
@@ -128,6 +129,10 @@ export default function ProjectDetail() {
         setShowShareModal(true);
     };
 
+    const filteredMilestones = milestones.filter(m =>
+        m.title.toLowerCase().includes(milestoneSearch.toLowerCase())
+    );
+
     if (loading) return (
         <div className="flex items-center justify-center min-h-screen bg-bg">
             <div className="animate-spin rounded-full h-10 w-10 border-2 border-accent border-r-transparent"></div>
@@ -189,11 +194,17 @@ export default function ProjectDetail() {
                     <div className="px-3 py-2">
                         <div className="relative">
                             <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-text-muted" />
-                            <input type="text" placeholder="Search milestones..." className="w-full pl-7 pr-2.5 py-1.5 border border-border rounded-lg text-xs bg-bg outline-none focus:border-accent transition-colors" />
+                            <input
+                                type="text"
+                                placeholder="Search milestones..."
+                                value={milestoneSearch}
+                                onChange={(e) => setMilestoneSearch(e.target.value)}
+                                className="w-full pl-7 pr-2.5 py-1.5 border border-border rounded-lg text-xs bg-bg outline-none focus:border-accent transition-colors"
+                            />
                         </div>
                     </div>
                     <div className="flex-1 overflow-y-auto px-2 pb-3">
-                        {milestones.map(m => (
+                        {filteredMilestones.map(m => (
                             <div key={m.id} onClick={() => setSelectedMilestone(m)}
                                 className={`px-3 py-2.5 rounded-lg cursor-pointer transition-all mb-1 ${
                                     selectedMilestone?.id === m.id
@@ -222,7 +233,7 @@ export default function ProjectDetail() {
                                 </button>
                             </div>
                         ))}
-                        {milestones.length === 0 && (
+                        {filteredMilestones.length === 0 && (
                             <div className="text-center py-12 text-text-muted">
                                 <ClipboardList size={28} className="mx-auto mb-2 opacity-40" />
                                 <p className="text-xs">No milestones yet.</p>
