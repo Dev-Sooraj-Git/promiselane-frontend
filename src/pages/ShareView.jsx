@@ -29,6 +29,7 @@ export default function ShareView() {
     const [project, setProject] = useState(null);
     const [milestones, setMilestones] = useState([]);
     const [timeline, setTimeline] = useState([]);
+    const [payments, setPayments] = useState([]);
     const [selectedMilestone, setSelectedMilestone] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -37,10 +38,11 @@ export default function ShareView() {
         api
             .get(`/share/${token}`)
             .then((res) => {
-                const { project, milestones, timeline } = res.data.data;
+                const { project, milestones, payments, timeline } = res.data.data;
                 setProject(project);
                 setMilestones(milestones || []);
                 setTimeline(timeline || []);
+                setPayments(payments || []);
                 if (milestones && milestones.length > 0) {
                     setSelectedMilestone(milestones[0]);
                 }
@@ -49,11 +51,20 @@ export default function ShareView() {
             .finally(() => setLoading(false));
     }, [token]);
 
+    console.log(project);
+
     const totalMilestones = milestones.length;
     const completedMilestones = milestones.filter((m) => ['approved', 'paid'].includes(m.status)).length;
     const progressPct = totalMilestones > 0 ? Math.round((completedMilestones / totalMilestones) * 100) : 0;
     const totalAmount = Number(project?.total_amount) || 0;
-    const totalPaid = milestones.reduce((sum, m) => (m.status === 'paid' ? sum + Number(m.amount) : sum), 0);
+    // Calculate per-milestone totals from real payments
+    const getMilestonePaid = (milestoneId) => {
+        return payments
+            .filter(p => p.milestone_id === milestoneId)
+            .reduce((sum, p) => sum + Number(p.amount), 0);
+    };
+    const totalPaid = payments.reduce((sum, p) => sum + Number(p.amount), 0);
+    // const totalPaid = milestones.reduce((sum, m) => (m.status === 'paid' ? sum + Number(m.amount) : sum), 0);
     const paymentPct = totalAmount > 0 ? Math.round((totalPaid / totalAmount) * 100) : 0;
 
     const donutRadius = 40;
@@ -102,7 +113,7 @@ export default function ShareView() {
                     </div>
                     <div className="text-center">
                         <p className="text-[10px] text-text-muted uppercase tracking-wider">Shared by</p>
-                        <p className="text-sm font-semibold text-text">Freelancer</p>
+                        <p className="text-sm font-semibold text-text">{project?.user?.name || 'A PromiseLane User'}</p>
                     </div>
                     <span
                         className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${project?.status === 'active' ? 'bg-success/10 text-success' : 'bg-border/50 text-text-muted'}`}
@@ -173,14 +184,18 @@ export default function ShareView() {
                         <p className="text-2xl font-bold text-text mb-1">₹{totalPaid.toLocaleString('en-IN')}</p>
                         <p className="text-xs text-text-muted mb-5">of ₹{totalAmount.toLocaleString('en-IN')} total</p>
                         <div className="space-y-3">
-                            {milestones.map((m) => {
-                                const paid = m.status === 'paid' ? Number(m.amount) : 0;
-                                const barPct = Number(m.amount) > 0 ? Math.round((paid / Number(m.amount)) * 100) : 0;
+                           {milestones.map((m) => {
+                                const paid = getMilestonePaid(m.id);
+                                const total = Number(m.amount);
+                                const barPct = total > 0 ? Math.round((paid / total) * 100) : 0;
                                 return (
                                     <div key={m.id}>
                                         <div className="flex justify-between text-xs mb-1">
                                             <span className="text-text-secondary truncate">{m.title}</span>
-                                            <span className="font-semibold text-text ml-2">₹{paid.toLocaleString('en-IN')}</span>
+                                            <span className="font-semibold text-text ml-2">
+                                                ₹{paid.toLocaleString('en-IN')} 
+                                                <span className="text-text-muted font-normal"> / ₹{total.toLocaleString('en-IN')}</span>
+                                            </span>
                                         </div>
                                         <div className="h-2 bg-border rounded-full overflow-hidden">
                                             <div className="h-full bg-gradient-to-r from-success to-emerald-400 rounded-full transition-all duration-500" style={{ width: `${barPct}%` }}></div>
