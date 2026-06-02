@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, MessageSquare, Mail, Phone, FileText, HelpCircle, Search, Filter, Paperclip } from 'lucide-react';
+import { Plus, Edit, Trash2, MessageSquare, Mail, Phone, FileText, HelpCircle, Search, Filter, Paperclip, ClipboardList } from 'lucide-react';
 import api from '../api/axios';
 import Button from './ui/Button';
 import Modal from './ui/Modal';
@@ -79,7 +79,7 @@ export default function RequirementSection({ milestone }) {
         <div>
             {/* Header */}
             <div className="flex items-center justify-between mb-3">
-                <h4 className="text-[11px] font-bold uppercase tracking-wider text-text-muted">📋 Requirements</h4>
+                <h4 className="text-[11px] font-bold uppercase tracking-wider text-text-muted flex items-center gap-1.5"><ClipboardList size={13} /> <span className="mt-[2px]">Requirements</span></h4>
                 <div className="flex items-center gap-2">
                     <div className="relative">
                         <Search size={12} className="absolute left-2 top-1/2 -translate-y-1/2 text-text-muted" />
