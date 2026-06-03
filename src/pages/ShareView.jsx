@@ -51,8 +51,6 @@ export default function ShareView() {
             .finally(() => setLoading(false));
     }, [token]);
 
-    console.log(project);
-
     const totalMilestones = milestones.length;
     const completedMilestones = milestones.filter((m) => ['approved', 'paid'].includes(m.status)).length;
     const progressPct = totalMilestones > 0 ? Math.round((completedMilestones / totalMilestones) * 100) : 0;

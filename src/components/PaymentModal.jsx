@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Trash2, Wallet, Banknote, Smartphone, BanknoteIcon } from 'lucide-react';
+import { Plus, Trash2, Wallet, Banknote, Smartphone, BanknoteIcon, CircleDollarSign } from 'lucide-react';
 import api from '../api/axios';
 import Button from './ui/Button';
 import Modal from './ui/Modal';
@@ -66,7 +66,7 @@ export default function PaymentModal({ isOpen, onClose, milestone, onUpdated }) 
     const percentage = milestoneAmount > 0 ? Math.round((totalPaid / milestoneAmount) * 100) : 0;
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} title={`💰 Payments — ${milestone?.title || ''}`} size="lg"
+        <Modal isOpen={isOpen} onClose={onClose} title={<><CircleDollarSign size={16} className="inline mr-1 mb-1" />Payments — {milestone?.title || ''}</>} size="lg"
             footer={
                 <div className="flex items-center justify-between">
                     <span className="text-sm font-semibold text-text">
