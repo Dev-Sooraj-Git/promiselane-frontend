@@ -93,7 +93,7 @@ export default function Register() {
                                 onChange={(e) => validateField('name', e.target.value)}
                                 required
                                 className="w-full px-4 py-2.5 border border-border rounded-xl bg-bg text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent/50 transition-all"
-                                placeholder="Sooraj"
+                                placeholder="Full Name"
                             />
                             {fieldErrors.name && <p className="text-danger text-xs mt-1">{fieldErrors.name}</p>}
                         </div>
