@@ -5,7 +5,7 @@ import { LayoutDashboard, FolderKanban, Clock, Settings, MessageSquare } from 'l
 const navItems = [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
     { icon: FolderKanban, label: 'Projects', path: '/projects' },
-    { icon: Clock, label: 'Timeline', path: '/timeline' },
+    // { icon: Clock, label: 'Timeline', path: '/timeline' },
 ];
 
 const secondaryItems = [
