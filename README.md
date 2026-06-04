@@ -4,7 +4,7 @@
 
 Frontend for PromiseLane — a project governance platform. Built with React and Tailwind CSS.
 
-🌐 [promiselane.in](https://promiselane.in) (coming soon)
+🌐 [promiselane.in](https://promiselane.in)
 
 ---
 
