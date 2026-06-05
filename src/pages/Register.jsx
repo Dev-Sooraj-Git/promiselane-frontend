@@ -89,8 +89,10 @@ export default function Register() {
                             <input
                                 type="text"
                                 value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                onChange={(e) => validateField('name', e.target.value)}
+                                onChange={(e) => {
+                                    setName(e.target.value);
+                                    validateField('name', e.target.value);
+                                }}
                                 required
                                 className="w-full px-4 py-2.5 border border-border rounded-xl bg-bg text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent/50 transition-all"
                                 placeholder="Full Name"
@@ -104,8 +106,10 @@ export default function Register() {
                             <input
                                 type="email"
                                 value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                onChange={(e) => validateField('email', e.target.value)}
+                                onChange={(e) => {
+                                    setEmail(e.target.value);
+                                    validateField('email', e.target.value);
+                                }}
                                 required
                                 className="w-full px-4 py-2.5 border border-border rounded-xl bg-bg text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent/50 transition-all"
                                 placeholder="you@example.com"
@@ -120,8 +124,10 @@ export default function Register() {
                                 <input
                                     type={showPassword ? 'text' : 'password'}
                                     value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    onChange={(e) => validateField('password', e.target.value)}
+                                    onChange={(e) => {
+                                        setPassword(e.target.value);
+                                        validateField('password', e.target.value);
+                                    }}
                                     required
                                     className="w-full px-4 py-2.5 pr-11 border border-border rounded-xl bg-bg text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent/50 transition-all"
                                     placeholder="Min. 8 characters"
