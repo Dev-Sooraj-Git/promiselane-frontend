@@ -11,15 +11,6 @@ const api = axios.create({
 // Attach JWT token to every request
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem('token');
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-});
-
-// Handle 401 responses globally
-api.interceptors.request.use((config) => {
-    const token = localStorage.getItem('token');
     const isShareRoute = config.url.includes('/share/');
     if (token && !isShareRoute) {
         config.headers.Authorization = `Bearer ${token}`;
