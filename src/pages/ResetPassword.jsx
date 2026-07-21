@@ -17,10 +17,12 @@ export default function ResetPassword() {
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState('');
+    const [fieldErrors, setFieldErrors] = useState({});
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
+        setFieldErrors({}); // reset field errors
 
         if (!token) {
             setError('Invalid reset link. Please request a new password reset link.');
@@ -48,7 +50,13 @@ export default function ResetPassword() {
                 navigate('/login');
             }, 2000);
         } catch (err) {
-            setError(err.response?.data?.message || 'Invalid or expired reset link.');
+            if (err.response?.status === 422) {
+                // Show field-specific validation errors
+                setFieldErrors(err.response.data.errors || {});
+                setError('Please fix the errors below.');
+            } else {
+                setError(err.response?.data?.message || 'Invalid or expired reset link.');
+            }
         } finally {
             setLoading(false);
         }
@@ -95,6 +103,9 @@ export default function ResetPassword() {
                                         placeholder="you@example.com"
                                     />
                                 </div>
+                                {fieldErrors.email && (
+                                    <p className="text-danger text-xs mt-1">{fieldErrors.email[0]}</p>
+                                )}
                             </div>
 
                             <div>
@@ -117,6 +128,9 @@ export default function ResetPassword() {
                                         {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                                     </button>
                                 </div>
+                                {fieldErrors.password && (
+                                    <p className="text-danger text-xs mt-1">{fieldErrors.password[0]}</p>
+                                )}
                             </div>
 
                             <div>
