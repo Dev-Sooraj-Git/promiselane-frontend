@@ -12,6 +12,8 @@ import Timeline from './pages/Timeline';
 import Settings from './pages/Settings';
 import Feedback from './pages/Feedback';
 import Privacy from './pages/Privacy';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 
 
 function ProtectedRoute({ children }) {
@@ -32,6 +34,8 @@ function App() {
                     <Route path="/register" element={<Register />} />
                     <Route path="/share/:token" element={<ShareView />} />
                     <Route path="/privacy" element={<Privacy />} /> 
+                    <Route path="/forgot-password" element={<ForgotPassword />} />
+                    <Route path="/reset-password" element={<ResetPassword />} />
 
                     {/* Protected routes with Layout */}
                     <Route element={<ProtectedRoute><Layout><Outlet /></Layout></ProtectedRoute>}>
