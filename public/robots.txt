@@ -1,0 +1,24 @@
+User-agent: *
+Allow: /
+
+# Authenticated areas
+Disallow: /dashboard
+Disallow: /dashboard/
+Disallow: /projects
+Disallow: /projects/
+Disallow: /settings
+Disallow: /settings/
+
+# Share pages (token‑based, not for indexing)
+Disallow: /share
+Disallow: /share/
+
+# Auth pages (functional, not content)
+Disallow: /login
+Disallow: /login/
+Disallow: /register
+Disallow: /register/
+Disallow: /forgot-password
+Disallow: /forgot-password/
+
+Sitemap: https://promiselane.in/sitemap.xml
